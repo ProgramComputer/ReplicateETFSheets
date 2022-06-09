@@ -129,9 +129,200 @@ sheet.getRange("O9:O").setWrapStrategy(SpreadsheetApp.WrapStrategy.CLIP);
 
 
 
+ 
+var percents = 
+    sheet.getRange("B9:B").getValues().filter(String).map(function(elem){return elem.toString()})
+        var minimumDollars = 0
+      var  lowestPercentage = 100
+        percents.forEach((key) => {
+        
+            
+           var percent = parseFloat(key)
+          
+            if (percent < lowestPercentage){
+                lowestPercentage = percent
+            }
+            minimumDollars+=Math.ceil(1/(percent/100))
+       
+        })
+        //reduce the total minimum dollars to ensure smallest equity meets minimum notional requirement of $1
+        smallestInvestment = minimumDollars*(lowestPercentage/100)
+        if (smallestInvestment > 1){
+            minimumDollars /= smallestInvestment
+        }
+        
+sheet.getRange("B6").setValue(Math.ceil(minimumDollars))
+}
+function orders(){
+   var side =     SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Create New Orders").getRange("B3").getValue();
+   console.log(side)
+   if(side == "Rebalance"){
+     rebalance()
+   }
+   else if(side == "Buy"){
+buy()
+   }
+    else if(side == "Sell"){
+     sell()
+   }
 
 }
+function buy(){
+  clearOrders();
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Create New Orders");
+  var market_value = parseFloat(getAccount().long_market_value) + parseFloat(getAccount().short_market_value);
+  var percent = sheet.getRange("F3").getValue();
+  var rebalance = sheet.getRange("F4").getValue();
+  var extendedHours = sheet.getRange("F5").getValue();
+  
+  
+  var symbols = {
+    "buy": sheet.getRange("A9:A").getValues().filter(String).map(function(elem){return elem.toString()}),
+    "sell": sheet.getRange("I9:I").getValues().filter(String).map(function(elem){return elem.toString()})
+  }
+  var qtys = {
+    "buy": sheet.getRange("B9:B").getValues().map(function(elem){return elem.toString()}),
+    "sell": sheet.getRange("J9:J").getValues().map(function(elem){return elem.toString()})
+  }
+  var types = {
+    "buy": sheet.getRange("C9:C").getValues().map(function(elem){return elem.toString()}),
+    "sell": sheet.getRange("K9:K").getValues().map(function(elem){return elem.toString()})
+  }
+  var tifs = {
+    "buy": sheet.getRange("D9:D").getValues().map(function(elem){return elem.toString()}),
+    "sell": sheet.getRange("L9:L").getValues().map(function(elem){return elem.toString()})
+  }
+  var limits = {
+    "buy": sheet.getRange("E9:E").getValues().map(function(elem){return elem.toString()}),
+    "sell": sheet.getRange("M9:M").getValues().map(function(elem){return elem.toString()})
+  }
+  var stops = {
+    "buy": sheet.getRange("F9:F").getValues().map(function(elem){return elem.toString()}),
+    "sell": sheet.getRange("N9:N").getValues().map(function(elem){return elem.toString()})
+  }
+  for(var i = 0; i < symbols.buy.length; i++) {
+      if(symbols.buy[i] != ""){
+         var account = getAccount()
+        market_value = parseFloat(account.long_market_value) + parseFloat(account.short_market_value);
+      sheet.getRange("G"+parseFloat(9+i)).setValue("submitting...");
+      
+      var qty = parseFloat(qtys.buy[i].toString().trim());
+      var sym = symbols.buy[i].toString().trim()
+      var side = "buy"
+      //var diffPercent = parseFloat(getPosition(sym).market_value)/market_value - (qty)/100
+      var targetBuy = parseFloat(sheet.getRange("B4").getValue()) * (qty/100);
+      var position = getPosition(sym)
 
+
+     // if(percent) {
+        //targetBuy = (parseFloat(position.market_value) - market_value * (qty/100) )/((qty/100)-1)
+     // }
+     // if(rebalance) {
+        var position_qty
+        if(isNaN(parseFloat(position.qty))) position_qty = 0;
+        else position_qty = parseFloat(position.qty)
+    
+          if(/*diffPercent >= 0 ||*/ targetBuy < 1){
+           sheet.getRange("G"+parseFloat(9+i)).setValue("skipping...")
+              continue;
+
+        }
+        qty = Math.abs(qty)
+    //  }
+      
+      if(qty == 0){
+        sheet.getRange("G"+parseFloat(9+i)).setValue("Order not sent, already have desired quantity.")
+      }
+      else {
+        var b_resp = submitOrder(sym,null,side,types.buy[i].toString().trim(),tifs.buy[i].toString().trim(),limits.buy[i].toString().trim(),stops.buy[i].toString().trim(),extendedHours,targetBuy)
+                //console.log(b_resp)
+
+       
+        sheet.getRange("G"+parseFloat(9+i)).setValue(truncateJson(b_resp))
+      }
+    }
+ }
+ SpreadsheetApp.getActive().toast("Buy completed.", "⚠️ Alert"); 
+  updateSheet()
+}
+function sell(){
+    clearOrders();
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Create New Orders");
+  var market_value = parseFloat(getAccount().long_market_value) + parseFloat(getAccount().short_market_value);
+  var percent = sheet.getRange("F3").getValue();
+  var rebalance = sheet.getRange("F4").getValue();
+  var extendedHours = sheet.getRange("F5").getValue();
+  
+  
+  var symbols = {
+    "buy": sheet.getRange("A9:A").getValues().filter(String).map(function(elem){return elem.toString()}),
+    "sell": sheet.getRange("I9:I").getValues().filter(String).map(function(elem){return elem.toString()})
+  }
+  var qtys = {
+    "buy": sheet.getRange("B9:B").getValues().map(function(elem){return elem.toString()}),
+    "sell": sheet.getRange("J9:J").getValues().map(function(elem){return elem.toString()})
+  }
+  var types = {
+    "buy": sheet.getRange("C9:C").getValues().map(function(elem){return elem.toString()}),
+    "sell": sheet.getRange("K9:K").getValues().map(function(elem){return elem.toString()})
+  }
+  var tifs = {
+    "buy": sheet.getRange("D9:D").getValues().map(function(elem){return elem.toString()}),
+    "sell": sheet.getRange("L9:L").getValues().map(function(elem){return elem.toString()})
+  }
+  var limits = {
+    "buy": sheet.getRange("E9:E").getValues().map(function(elem){return elem.toString()}),
+    "sell": sheet.getRange("M9:M").getValues().map(function(elem){return elem.toString()})
+  }
+  var stops = {
+    "buy": sheet.getRange("F9:F").getValues().map(function(elem){return elem.toString()}),
+    "sell": sheet.getRange("N9:N").getValues().map(function(elem){return elem.toString()})
+  }
+    for(var i = 0; i < symbols.sell.length; i++) {
+    var account = getAccount()
+    market_value = parseFloat(account.long_market_value) + parseFloat(account.short_market_value);
+    if(symbols.sell[i] != "") {
+      sheet.getRange("O"+parseFloat(9+i)).setValue("submitting...");
+      
+      var qty = parseFloat(qtys.sell[i].toString().trim());
+      var sym = symbols.sell[i].toString().trim();
+      var side = "sell"
+      var targetSell = 0.00;
+      var position = getPosition(sym)
+
+      var diffPercent = parseFloat(position.market_value)/market_value - (qty)/100
+    //  if(percent) { 
+        targetSell = Math.abs((parseFloat(position.market_value) - parseFloat(market_value) * (qty/100) )/((qty/100)-1))
+     // }
+     // if(rebalance) {
+        var position_qty
+        if(isNaN(parseFloat(position.qty))) position_qty = 0;
+        else position_qty = parseFloat(position.qty)
+        
+        
+        
+        if(diffPercent <= 0){
+           sheet.getRange("O"+parseFloat(9+i)).setValue("skipping...")
+          targetSell = parseFloat(sheet.getRange("B4").getValue())*(qty/100)
+
+        }
+       
+   //   }
+      
+      if(qty == 0){
+        sheet.getRange("O"+parseFloat(9+i)).setValue("Order not sent, already have desired quantity.")
+      }
+      else {
+        var s_resp = submitOrder(sym,null,side,types.sell[i].toString().trim(),tifs.sell[i].toString().trim(),limits.sell[i].toString().trim(),stops.sell[i].toString().trim(),extendedHours,targetSell)
+        //console.log(s_resp)
+        sheet.getRange("O"+parseFloat(9+i)).setValue(truncateJson(s_resp))
+
+      }
+    }
+ 
+  }
+
+}
 function rebalance(){
  clearOrders()
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Create New Orders");
@@ -183,10 +374,10 @@ function rebalance(){
       var position = getPosition(sym)
 
       var diffPercent = parseFloat(position.market_value)/market_value - (qty)/100
-      if(percent) { 
+    //  if(percent) { 
         targetSell = Math.abs((parseFloat(position.market_value) - parseFloat(market_value) * (qty/100) )/((qty/100)-1))
-      }
-      if(rebalance) {
+     // }
+     // if(rebalance) {
         var position_qty
         if(isNaN(parseFloat(position.qty))) position_qty = 0;
         else position_qty = parseFloat(position.qty)
@@ -199,7 +390,7 @@ function rebalance(){
 
         }
        
-      }
+   //   }
       
       if(qty == 0){
         sheet.getRange("O"+parseFloat(9+i)).setValue("Order not sent, already have desired quantity.")
@@ -212,7 +403,8 @@ function rebalance(){
 
       }
     }
- 
+ SpreadsheetApp.getActive().toast("Sell completed.", "⚠️ Alert"); 
+ updateSheet()
   }
  for(var i = 0; i < symbols.buy.length; i++) {
       if(symbols.buy[i] != ""){
@@ -228,10 +420,10 @@ function rebalance(){
       var position = getPosition(sym)
 
 
-      if(percent) {
+     // if(percent) {
         targetBuy = (parseFloat(position.market_value) - market_value * (qty/100) )/((qty/100)-1)
-      }
-      if(rebalance) {
+     // }
+     // if(rebalance) {
         var position_qty
         if(isNaN(parseFloat(position.qty))) position_qty = 0;
         else position_qty = parseFloat(position.qty)
@@ -242,7 +434,7 @@ function rebalance(){
 
         }
         qty = Math.abs(qty)
-      }
+    //  }
       
       if(qty == 0){
         sheet.getRange("G"+parseFloat(9+i)).setValue("Order not sent, already have desired quantity.")
