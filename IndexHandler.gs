@@ -1,3 +1,4 @@
+    
 function writeCSVDataToSheet(data) {
   var name = data.getBlob().getName()
   var contents = Utilities.parseCsv(data);
@@ -26,7 +27,7 @@ var  response = UrlFetchApp.fetch(url);
   SpreadsheetApp.getActive().toast("The CSV file was successfully imported into " + sheetName + ".", "⚠️ Alert"); 
 
   }
-  else if(response.getBlob().getName().match(/spreadsheet/) != null){
+  else if(response.getBlob().getName().match(/xlsx/) != null){
     writeXLSVDataToSheet(response)
   SpreadsheetApp.getActive().toast("The XLSV file was successfully imported into " + sheetName + ".", "⚠️ Alert"); 
   }
