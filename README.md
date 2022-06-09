@@ -6,8 +6,7 @@ Signficant losses can occur. Trading equities is always dangerous and should be 
 By using this repository, you accept all liability or consequences related to the code provided here.
 
 ## Steps
-1. Make a copy
-2. Copy Scripts to Apps Script Project
+1. Copy Scripts to Apps Script Project
 3. Enter Alpaca API keys in Account & Portfolio sheet and enter a .csv or .xlsv file link of the ETF holdings
 4. Run Setup
 5. Try other functions
