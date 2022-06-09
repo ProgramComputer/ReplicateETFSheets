@@ -403,8 +403,7 @@ function rebalance(){
 
       }
     }
- SpreadsheetApp.getActive().toast("Sell completed.", "⚠️ Alert"); 
- updateSheet()
+
   }
  for(var i = 0; i < symbols.buy.length; i++) {
       if(symbols.buy[i] != ""){
