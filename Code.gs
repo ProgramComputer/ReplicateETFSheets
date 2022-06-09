@@ -38,9 +38,10 @@ tickersA1 = foundTickers.getA1Notation();
 weightsA1 = foundWeights.getA1Notation();
 var ordersSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Create New Orders")
 
+ordersSheet.getRange("Q9:Q").clear();
+ordersSheet.getRange("R9:R").clear();
 ordersSheet.getRange("Q9:Q").setNumberFormat("#0.00#%");
 ordersSheet.getRange("R9:R").setNumberFormat("#0.00#%")
-ordersSheet.getRange("R9:R").copyTo(ordersSheet.getRange("R10:R"))
 ordersSheet.getRange("Q9").setFormula("=indirect(cell(\"address\",Offset(Indirect(Index(CELL(\"address\",INDEX('Account & Portfolio'!$A$17:$A,MATCH(trim(I9),'Account & Portfolio'!$A$17:$A,0))))),0,2)))/indirect(cell(\"address\",Offset(Indirect(Index(CELL(\"address\",INDEX('Account & Portfolio'!$C$17:$C,MATCH(\"total\",'Account & Portfolio'!$C$17:$C,0))))),1,0)))")
   ordersSheet.getRange("R9").setFormula("=Q9-(J9/100)");
   ordersSheet.getRange("Q9").copyTo(ordersSheet.getRange("Q10:Q"))
