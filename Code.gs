@@ -20,7 +20,8 @@ function setup(){
     }
   });
   
-  if(shouldCreateTrigger && sheet.getRange("F4").getValue()) {
+  if(shouldCreateTrigger &&  SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Create New Orders")
+.getRange("F4").getValue()) {
     ScriptApp.newTrigger("rebalance").timeBased().everyHours(3).inTimezone("America/New_York").create()
   }
 
@@ -47,20 +48,31 @@ ordersSheet.getRange("Q9").setFormula("=indirect(cell(\"address\",Offset(Indirec
   ordersSheet.getRange("Q9").copyTo(ordersSheet.getRange("Q10:Q"))
   ordersSheet.getRange("R9").copyTo(ordersSheet.getRange("R10:R"))
 
+var batchGetValues = Sheets.Spreadsheets.Values.batchGet(holdingsSheet.getParent().getId(),{ranges:[name +" Holdings!"+tickersA1[0]+(parseInt(tickersA1[1])+1)+":"+tickersA1[0],name +" Holdings!"+weightsA1[0]+(parseInt(weightsA1[1])+1)+":"+weightsA1[0]]})
+// console.log(batchGetValues.valueRanges[0].values)
+// console.log(batchGetValues.valueRanges[1].values)
+ const batchGetValuesMerged = batchGetValues.valueRanges[0].values.map((item,i) => [item[0],batchGetValues.valueRanges[1].values[i][0]]); 
+ const assets = JSON.stringify(getAssets())
+ const filteredBatchGetValuesMerged = batchGetValuesMerged.filter(o => assets.includes(o[0] ))
 
+const firstArrayBatchGet = []
+const secondArrayBatchGet = []
+ for (const element of filteredBatchGetValuesMerged) {
+    firstArrayBatchGet.push([element[0]]);
+    secondArrayBatchGet.push([element[1]]);
+}
 
 
 //buy starts here
 ordersSheet.getRange("A9:G").clearContent()
 
-batchGetValues = Sheets.Spreadsheets.Values.batchGet(holdingsSheet.getParent().getId(),{ranges:[name +" Holdings!"+tickersA1[0]+(parseInt(tickersA1[1])+1)+":"+tickersA1[0],name +" Holdings!"+weightsA1[0]+(parseInt(weightsA1[1])+1)+":"+weightsA1[0]]})
-// console.log(batchGetValues.valueRanges[0].values)
-// console.log(batchGetValues.valueRanges[1].values)
 
-ordersSheet.getRange("A9:A" + (8 + batchGetValues.valueRanges[0].values.length)).setValues(batchGetValues.valueRanges[0].values)
-ordersSheet.getRange("B9:B"+ (8 + batchGetValues.valueRanges[1].values.length)).setValues(batchGetValues.valueRanges[1].values)
-ordersSheet.getRange("C9:C"+ (8 + batchGetValues.valueRanges[1].values.length)).setValue("market")
-ordersSheet.getRange("D9:D"+ (8 + batchGetValues.valueRanges[1].values.length)).setValue("day")
+
+
+ordersSheet.getRange("A9:A" + (8 + firstArrayBatchGet.length)).setValues(firstArrayBatchGet)
+ordersSheet.getRange("B9:B"+ (8 + secondArrayBatchGet.length)).setValues(secondArrayBatchGet)
+ordersSheet.getRange("C9:C"+ (8 + secondArrayBatchGet.length)).setValue("market")
+ordersSheet.getRange("D9:D"+ (8 + secondArrayBatchGet.length)).setValue("day")
 
 
 //  let symbolRange = Sheets.newValueRange();
@@ -89,10 +101,10 @@ ordersSheet.getRange("D9:D"+ (8 + batchGetValues.valueRanges[1].values.length)).
 
 //sell starts here
 ordersSheet.getRange("I9:O").clearContent()
-ordersSheet.getRange("I9:I" + (8 + batchGetValues.valueRanges[0].values.length)).setValues(batchGetValues.valueRanges[0].values)
-ordersSheet.getRange("J9:J"+ (8 + batchGetValues.valueRanges[1].values.length)).setValues(batchGetValues.valueRanges[1].values)
-ordersSheet.getRange("K9:K"+ (8 + batchGetValues.valueRanges[1].values.length)).setValue("market")
-ordersSheet.getRange("L9:L"+ (8 + batchGetValues.valueRanges[1].values.length)).setValue("day")
+ordersSheet.getRange("I9:I" + (8 + firstArrayBatchGet.length)).setValues(firstArrayBatchGet)
+ordersSheet.getRange("J9:J"+ (8 + secondArrayBatchGet.length)).setValues(secondArrayBatchGet)
+ordersSheet.getRange("K9:K"+ (8 + secondArrayBatchGet.length)).setValue("market")
+ordersSheet.getRange("L9:L"+ (8 + secondArrayBatchGet.length)).setValue("day")
 
 //add conditional format rules
 var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Create New Orders");
@@ -547,6 +559,15 @@ function getPrice(sym) {
    
     muteHttpExceptions: true
   }, true).trade.p
+}
+
+function getAssets(){
+
+  return _request(("/v2/assets"), {
+    method: "GET",
+    muteHttpExceptions: true
+  }, false)
+
 }
 
 function clearPosition(sym) {
