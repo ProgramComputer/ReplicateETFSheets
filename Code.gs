@@ -51,7 +51,7 @@ ordersSheet.getRange("Q9").setFormula("=indirect(cell(\"address\",Offset(Indirec
 var batchGetValues = Sheets.Spreadsheets.Values.batchGet(holdingsSheet.getParent().getId(),{ranges:[name +" Holdings!"+tickersA1[0]+(parseInt(tickersA1[1])+1)+":"+tickersA1[0],name +" Holdings!"+weightsA1[0]+(parseInt(weightsA1[1])+1)+":"+weightsA1[0]]})
 // console.log(batchGetValues.valueRanges[0].values)
 // console.log(batchGetValues.valueRanges[1].values)
- const batchGetValuesMerged = batchGetValues.valueRanges[0].values.map((item,i) => [item[0],batchGetValues.valueRanges[1].values[i][0]]); 
+ const batchGetValuesMerged = batchGetValues.valueRanges[0].values.map((item,i) => [item[0].trim(),batchGetValues.valueRanges[1].values[i][0].trim()]); 
  const assets = JSON.stringify(getAssets())
  const filteredBatchGetValuesMerged = batchGetValuesMerged.filter(o => assets.includes(o[0] ))
 
