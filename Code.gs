@@ -49,8 +49,7 @@ ordersSheet.getRange("Q9").setFormula("=indirect(cell(\"address\",Offset(Indirec
   ordersSheet.getRange("R9").copyTo(ordersSheet.getRange("R10:R"))
 
 var batchGetValues = Sheets.Spreadsheets.Values.batchGet(holdingsSheet.getParent().getId(),{ranges:[name +" Holdings!"+tickersA1[0]+(parseInt(tickersA1[1])+1)+":"+tickersA1[0],name +" Holdings!"+weightsA1[0]+(parseInt(weightsA1[1])+1)+":"+weightsA1[0]]})
-// console.log(batchGetValues.valueRanges[0].values)
-// console.log(batchGetValues.valueRanges[1].values)
+
  const batchGetValuesMerged = batchGetValues.valueRanges[0].values.map((item,i) => [item[0].trim(),batchGetValues.valueRanges[1].values[i][0].trim()]); 
  const assets = JSON.stringify(getAssets())
  const filteredBatchGetValuesMerged = batchGetValuesMerged.filter(o => assets.includes(o[0] ))
@@ -372,7 +371,7 @@ function rebalance(){
   
   
  
-  
+  console.log(getAccount().cash+ " cash before")
   symbolsLength = symbols.buy.length > symbols.sell.length ? symbols.buy.length : symbols.sell.length
   for(var i = 0; i < symbols.sell.length; i++) {
     var account = getAccount()
@@ -411,14 +410,15 @@ function rebalance(){
       else {
         var s_resp = submitOrder(sym,null,side,types.sell[i].toString().trim(),tifs.sell[i].toString().trim(),limits.sell[i].toString().trim(),stops.sell[i].toString().trim(),extendedHours,targetSell)
         //console.log(s_resp)
-        soldAmount += s_resp.notional;
+        soldAmount += parseFloat(s_resp.notional);
         sheet.getRange("O"+parseFloat(9+i)).setValue(truncateJson(s_resp))
 
       }
     }
 
   }
-  soldAmount += (getAccount().cash - SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Account & Portfolio").getRange("E6") - soldAmount)
+
+soldAmount += (parseFloat(getAccount().cash) - SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Account & Portfolio").getRange("E6").getValue() - parseFloat(soldAmount))
  for(var i = 0; i < symbols.buy.length; i++) {
       if(symbols.buy[i] != ""){
          var account = getAccount()
@@ -456,7 +456,7 @@ function rebalance(){
         var b_resp = submitOrder(sym,null,side,types.buy[i].toString().trim(),tifs.buy[i].toString().trim(),limits.buy[i].toString().trim(),stops.buy[i].toString().trim(),extendedHours,targetBuy)
                 //console.log(b_resp)
 
-        soldAmount -= b_resp.notional;
+        soldAmount -= parseFloat(b_resp.notional);
         sheet.getRange("G"+parseFloat(9+i)).setValue(truncateJson(b_resp))
       }
     }
