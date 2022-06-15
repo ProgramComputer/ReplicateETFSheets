@@ -43,7 +43,9 @@ ordersSheet.getRange("Q9:Q").clear();
 ordersSheet.getRange("R9:R").clear();
 ordersSheet.getRange("Q9:Q").setNumberFormat("#0.00#%");
 ordersSheet.getRange("R9:R").setNumberFormat("#0.00#%")
-ordersSheet.getRange("Q9").setFormula("=indirect(cell(\"address\",Offset(Indirect(Index(CELL(\"address\",INDEX('Account & Portfolio'!$A$17:$A,MATCH(trim(I9),'Account & Portfolio'!$A$17:$A,0))))),0,2)))/indirect(cell(\"address\",Offset(Indirect(Index(CELL(\"address\",INDEX('Account & Portfolio'!$C$17:$C,MATCH(\"total\",'Account & Portfolio'!$C$17:$C,0))))),1,0)))")
+let symbols = "'Account & Portfolio'!$A$17:$A"
+let marketValues = "'Account & Portfolio'!$C$17:$C"
+ordersSheet.getRange("Q9").setFormula(`=indirect(cell("address",Offset(Indirect(Index(CELL("address",INDEX(${symbols},MATCH(trim(I9),${symbols},0))))),0,2)))/indirect(cell("address",Offset(Indirect(Index(CELL("address",INDEX(${marketValues},MATCH("total",${marketValues},0))))),1,0)))`)
   ordersSheet.getRange("R9").setFormula("=Q9-(J9/100)");
   ordersSheet.getRange("Q9").copyTo(ordersSheet.getRange("Q10:Q"))
   ordersSheet.getRange("R9").copyTo(ordersSheet.getRange("R10:R"))
@@ -371,7 +373,6 @@ function rebalance(){
   
   
  
-  console.log(getAccount().cash+ " cash before")
   symbolsLength = symbols.buy.length > symbols.sell.length ? symbols.buy.length : symbols.sell.length
   for(var i = 0; i < symbols.sell.length; i++) {
     var account = getAccount()
@@ -422,7 +423,7 @@ soldAmount += (parseFloat(getAccount().cash) - SpreadsheetApp.getActiveSpreadshe
  for(var i = 0; i < symbols.buy.length; i++) {
       if(symbols.buy[i] != ""){
          var account = getAccount()
-        market_value = parseFloat(account.long_market_value) + parseFloat(account.short_market_value);
+      var  market_value = parseFloat(account.long_market_value) + parseFloat(account.short_market_value) + soldAmount;
       sheet.getRange("G"+parseFloat(9+i)).setValue("submitting...");
       
       var qty = parseFloat(qtys.buy[i].toString().trim());
