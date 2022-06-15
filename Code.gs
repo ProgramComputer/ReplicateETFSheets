@@ -418,7 +418,7 @@ function rebalance(){
     }
 
   }
-  soldAmount += (getAccount().cash - SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Account & Portfolio").getRange("E6"))
+  soldAmount += (getAccount().cash - SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Account & Portfolio").getRange("E6") - soldAmount)
  for(var i = 0; i < symbols.buy.length; i++) {
       if(symbols.buy[i] != ""){
          var account = getAccount()
