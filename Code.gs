@@ -432,7 +432,8 @@ soldAmount += (parseFloat(getAccount().cash) - SpreadsheetApp.getActiveSpreadshe
       var diffPercent = parseFloat(getPosition(sym).market_value)/market_value - (qty)/100
       var targetBuy = 0.00;
       var position = getPosition(sym)
-      if(position.message.includes("does not exist")){
+
+      if(position.hasOwnProperty("message") && JSON.stringify(position.message).includes("does not exist")){
         position = {
           "market_value": 0
         }
@@ -460,7 +461,7 @@ soldAmount += (parseFloat(getAccount().cash) - SpreadsheetApp.getActiveSpreadshe
       }
       else {
         var b_resp = submitOrder(sym,null,side,types.buy[i].toString().trim(),tifs.buy[i].toString().trim(),limits.buy[i].toString().trim(),stops.buy[i].toString().trim(),extendedHours,targetBuy)
-              //  console.log(b_resp)
+                console.log(b_resp)
 
         soldAmount -= parseFloat(b_resp.notional);
         sheet.getRange("G"+parseFloat(9+i)).setValue(truncateJson(b_resp))
