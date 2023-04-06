@@ -1,5 +1,6 @@
 # ReplicateETFGASheets
-
+##Info
+A rebalance trigger is fired everyday at 9:30 ET.
 ## Disclaimer:
 There can be significant tax, financial, and legal consequences related to this repository and its use.
 Signficant losses can occur. Trading equities is always dangerous and should be approached with extreme caution.
