@@ -402,6 +402,13 @@ function rebalance(){
               continue;
 
         }
+        else if(position.hasOwnProperty("message") && JSON.stringify(position.message).includes("does not exist")
+        ){
+            sheet.getRange("O"+parseFloat(9+i)).setValue("skipping because postion does not exist")
+
+              continue;
+      }
+        
        
    //   }
       
