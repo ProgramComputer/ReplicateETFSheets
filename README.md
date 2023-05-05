@@ -1,6 +1,8 @@
 # ReplicateETFGASheets
 ## About
-replicateETFGASSheets uses the idea of Direct Indexing to replicate the constituents of an ETF or any file of constituents using Alpaca API and Google Sheets. Similar products are offered by brokers with fees however this app if you choose to run it will not have fees unless Google and Alpaca renege. I strongly recommend to try with Paper-trading first.
+replicateETFGASSheets uses the idea of Direct Indexing to replicate the constituents of an ETF or any file of constituents using Alpaca API and Google Sheets. Similar products are offered by brokers with fees however this app if you choose to run it will not have fees unless Google and Alpaca renege. 
+
+<strong>I strongly recommend to try with Paper-trading first.</strong> The rebalance trigger will be costly tax-wise. It can be changed in the triggers portion in Google Apps Script menu or at [line](https://github.com/ProgramComputer/ReplicateETFGASheets/blob/ce416aaa726d3f84a7f1965643e7c8f81bbdd04a/Code.gs#L13) before execution.
 
 This is still a Work-In-Progress, contributions will be welcome, ask any questions in [Discussions](https://github.com/ProgramComputer/ReplicateETFGASheets/discussions).
 
@@ -24,3 +26,4 @@ By using this repository, you accept all liability or consequences related to th
 ## TODO
 * Use https://github.com/SheetJS/sheetjs and migrate away from Google
 * Create a Docker container to run offline
+* Develop Better Tax-Loss harvesting
