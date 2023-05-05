@@ -1,8 +1,9 @@
 # ReplicateETFGASheets
 ## About
-replicateETFGASSheets uses the idea of Direct Indexing to replicate the constituents of an ETF or any file of constituents using Alpaca API and Google Sheets. Similar products are offered by brokers with fees however this app if you choose to run it will not have fees unless Google and Alpaca renege.
+replicateETFGASSheets uses the idea of Direct Indexing to replicate the constituents of an ETF or any file of constituents using Alpaca API and Google Sheets. Similar products are offered by brokers with fees however this app if you choose to run it will not have fees unless Google and Alpaca renege. I strongly recommend to try with Paper-trading first.
 
-This is still a Work-In-Progress and contributions will be welcome.
+This is still a Work-In-Progress, contributions will be welcome, ask any questions in [Discussions](https://github.com/ProgramComputer/ReplicateETFGASheets/discussions).
+
 ## Info
 
 
