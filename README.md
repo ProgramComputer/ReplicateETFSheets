@@ -1,5 +1,11 @@
 # ReplicateETFGASheets
+## About
+replicateETFGASSheets uses the idea of Direct Indexing to replicate the constituents of an ETF or any file of constituents using Alpaca API and Google Sheets. Similar products are offered by brokers with fees however this app if you choose to run it will not have fees unless Google and Alpaca renege.
+
+This is still a Work-In-Progress and contributions will be welcome.
 ## Info
+
+
 A rebalance trigger is fired every 3 hours and constituents updated everyday at 9:30 ET.
 ## Disclaimer:
 There can be significant tax, financial, and legal consequences related to this repository and its use.
@@ -14,5 +20,6 @@ By using this repository, you accept all liability or consequences related to th
 5. Enter Alpaca API keys in Account & Portfolio sheet and enter a .csv or .xlsv file link of the ETF holdings
 6. Run Setup
 7. Try other functions
-## Contributions
-are welcome
+## TODO
+* Use https://github.com/SheetJS/sheetjs and migrate away from Google
+* Create a Docker container to run offline
