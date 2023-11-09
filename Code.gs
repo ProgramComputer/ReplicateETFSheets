@@ -58,7 +58,7 @@ var batchGetValues = Sheets.Spreadsheets.Values.batchGet(holdingsSheet.getParent
 
 const firstArrayBatchGet = []
 const secondArrayBatchGet = []
- for (const element of filteredBatchGetValuesMerged) {
+for (const element of filteredBatchGetValuesMerged) {
     firstArrayBatchGet.push([element[0]]);
     secondArrayBatchGet.push([element[1]]);
 }
@@ -389,6 +389,7 @@ function rebalance(){
       var diffPercent = parseFloat(position.market_value)/market_value - (qty)/100
     //  if(percent) { 
         targetSell = Math.abs((parseFloat(position.market_value) - parseFloat(market_value) * (qty/100) )/((qty/100)-1))
+        targetSell = +(targetSell.toFixed(2))
      // }
      // if(rebalance) {
         var position_qty
@@ -404,7 +405,7 @@ function rebalance(){
         }
         else if(position.hasOwnProperty("message") && JSON.stringify(position.message).includes("does not exist")
         ){
-            sheet.getRange("O"+parseFloat(9+i)).setValue("skipping because postion does not exist")
+            sheet.getRange("O"+parseFloat(9+i)).setValue("skipping because position does not exist")
 
               continue;
       }

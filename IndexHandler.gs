@@ -4,6 +4,7 @@ function writeCSVDataToSheet(data) {
   var contents = Utilities.parseCsv(data);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var itt = ss.getSheetByName(name +' Holdings')
+  itt.clear();
    if (!itt) {
 
    ss.insertSheet(name +' Holdings');
@@ -56,6 +57,7 @@ function writeXLSVDataToSheet(data) {
   let spreadsheet = Drive.Files.insert(config, excelFile);
  var source =  SpreadsheetApp.openById(spreadsheet.getId()).getActiveSheet();
    var itt = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(excelFile.getName()+" Holdings")
+   itt.clear()
    if (itt) {
 
    SpreadsheetApp.getActiveSpreadsheet().deleteSheet(itt);
